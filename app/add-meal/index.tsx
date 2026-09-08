@@ -7,6 +7,7 @@ import { spacing, radius, type } from '@/lib/theme';
 import { searchFoodDatabase } from '@/lib/foodDatabase';
 import { PressableScale } from '@/components/PressableScale';
 import { Segmented } from '@/components/Segmented';
+import { SheetHeader } from '@/components/SheetHeader';
 import { MealType } from '@/lib/types';
 
 const MEAL_LABELS: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
@@ -24,7 +25,7 @@ export default function AddMeal() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.lg }}>
-      <Text style={[type.title2, { color: colors.label, marginBottom: spacing.md }]}>Tambah Makanan</Text>
+      <SheetHeader title="Tambah Makanan" />
 
       <Segmented options={MEAL_LABEL_TEXT} value={mealIndex} onChange={setMealIndex} />
 
@@ -50,22 +51,40 @@ export default function AddMeal() {
         />
       </View>
 
-      <PressableScale
-        onPress={() => router.push({ pathname: '/add-meal/scan', params: { mealType } })}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          backgroundColor: colors.blue,
-          borderRadius: radius.md,
-          padding: spacing.md,
-          marginBottom: spacing.md,
-          justifyContent: 'center',
-        }}
-      >
-        <Ionicons name="barcode-outline" size={20} color="#fff" />
-        <Text style={[type.headline, { color: '#fff' }]}>Scan Barcode</Text>
-      </PressableScale>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+        <PressableScale
+          onPress={() => router.push({ pathname: '/add-meal/scan', params: { mealType } })}
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.sm,
+            backgroundColor: colors.blue,
+            borderRadius: radius.md,
+            padding: spacing.md,
+            justifyContent: 'center',
+          }}
+        >
+          <Ionicons name="barcode-outline" size={20} color="#fff" />
+          <Text style={[type.headline, { color: '#fff' }]}>Scan Barcode</Text>
+        </PressableScale>
+        <PressableScale
+          onPress={() => router.push({ pathname: '/add-meal/manual', params: { mealType } })}
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.sm,
+            backgroundColor: colors.fill,
+            borderRadius: radius.md,
+            padding: spacing.md,
+            justifyContent: 'center',
+          }}
+        >
+          <Ionicons name="create-outline" size={20} color={colors.label} />
+          <Text style={[type.headline, { color: colors.label }]}>Tambah Manual</Text>
+        </PressableScale>
+      </View>
 
       <FlatList
         data={results}

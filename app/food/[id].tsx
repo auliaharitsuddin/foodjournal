@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { Text, TextInput, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/lib/useTheme';
 import { spacing, radius, type } from '@/lib/theme';
@@ -9,6 +10,7 @@ import { useStore } from '@/lib/store';
 import { Button } from '@/components/Button';
 import { PressableScale } from '@/components/PressableScale';
 import { FoodItem, MealType } from '@/lib/types';
+import { safeBack, safeDismissAll } from '@/lib/nav';
 
 export default function FoodDetail() {
   const { colors } = useTheme();
@@ -40,22 +42,50 @@ export default function FoodDetail() {
   };
 
   const [grams, setGrams] = useState(food.defaultServingG);
+  const [gramsText, setGramsText] = useState(String(food.defaultServingG));
   const mealType = (params.mealType as MealType) ?? 'snack';
   const factor = grams / 100;
 
   const adjust = (delta: number) => {
     Haptics.selectionAsync();
-    setGrams((g) => Math.max(10, g + delta));
+    setGrams((g) => {
+      const next = Math.max(10, g + delta);
+      setGramsText(String(next));
+      return next;
+    });
+  };
+
+  const onGramsTextChange = (v: string) => {
+    const digitsOnly = v.replace(/[^0-9]/g, '');
+    setGramsText(digitsOnly);
+    const n = parseInt(digitsOnly, 10);
+    if (!isNaN(n)) setGrams(n);
+  };
+
+  const onGramsBlur = () => {
+    const clamped = Math.max(10, grams || 10);
+    setGrams(clamped);
+    setGramsText(String(clamped));
   };
 
   const confirm = () => {
-    addMeal(food, grams, mealType);
+    addMeal(food, Math.max(10, grams), mealType);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    router.dismissAll();
+    safeDismissAll();
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.lg }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: spacing.xs }}>
+        <PressableScale
+          onPress={safeBack}
+          haptic="light"
+          style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: colors.fill, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Ionicons name="close" size={18} color={colors.label} />
+        </PressableScale>
+      </View>
+
       <View style={{ alignItems: 'center', marginBottom: spacing.lg }}>
         <Text style={{ fontSize: 48 }}>{food.emoji}</Text>
         <Text style={[type.title2, { color: colors.label, marginTop: spacing.sm, textAlign: 'center' }]}>{food.name}</Text>
@@ -78,8 +108,19 @@ export default function FoodDetail() {
           <Text style={[type.title2, { color: colors.label }]}>−</Text>
         </PressableScale>
         <View style={{ alignItems: 'center', minWidth: 100 }}>
-          <Text style={[type.largeTitle, { color: colors.label }]}>{grams}</Text>
-          <Text style={[type.footnote, { color: colors.labelSecondary }]}>gram</Text>
+          <TextInput
+            value={gramsText}
+            onChangeText={onGramsTextChange}
+            onBlur={onGramsBlur}
+            keyboardType="number-pad"
+            selectTextOnFocus
+            style={[
+              type.largeTitle,
+              { color: colors.label, textAlign: 'center', padding: 0, borderWidth: 0, minWidth: 80 },
+              { outlineWidth: 0 } as any, // web-only outline reset, no-op on native
+            ]}
+          />
+          <Text style={[type.footnote, { color: colors.labelSecondary }]}>gram (ketuk untuk ubah)</Text>
         </View>
         <PressableScale
           onPress={() => adjust(10)}

@@ -21,6 +21,7 @@ export const defaultState: AppState = {
   meals: [],
   water: [],
   weights: [],
+  aiRecommendation: null,
 };
 
 export async function loadState(): Promise<AppState> {
@@ -36,4 +37,8 @@ export async function loadState(): Promise<AppState> {
 
 export async function saveState(state: AppState): Promise<void> {
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+export async function clearState(): Promise<void> {
+  await AsyncStorage.removeItem(STORAGE_KEY);
 }

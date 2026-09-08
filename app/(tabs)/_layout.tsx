@@ -24,6 +24,11 @@ function TabButton(props: any) {
         props.onPressOut?.(e);
       }}
       onPress={(e) => {
+        // react-native-web renders this Pressable as a real <a href> (expo-router passes
+        // `href` through tabBarButton props for web deep-linking). Without preventDefault
+        // the browser's native anchor navigation fires alongside the SPA navigation below,
+        // causing a full page reload on every tab switch.
+        (e as any)?.preventDefault?.();
         Haptics.selectionAsync();
         props.onPress?.(e);
       }}

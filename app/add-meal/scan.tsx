@@ -10,6 +10,7 @@ import { spacing, radius, type } from '@/lib/theme';
 import { Button } from '@/components/Button';
 import { PressableScale } from '@/components/PressableScale';
 import { lookupBarcode } from '@/lib/openFoodFacts';
+import { safeBack } from '@/lib/nav';
 
 export default function ScanBarcode() {
   const { colors } = useTheme();
@@ -65,7 +66,7 @@ export default function ScanBarcode() {
         </Text>
         <Button title="Izinkan Kamera" onPress={requestPermission} />
         <View style={{ height: spacing.md }} />
-        <Button title="Batal" variant="secondary" onPress={() => router.back()} />
+        <Button title="Batal" variant="secondary" onPress={safeBack} />
       </SafeAreaView>
     );
   }
@@ -81,7 +82,7 @@ export default function ScanBarcode() {
       <SafeAreaView style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: spacing.lg }}>
           <PressableScale
-            onPress={() => router.back()}
+            onPress={safeBack}
             style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' }}
           >
             <Ionicons name="close" size={22} color="#fff" />

@@ -14,7 +14,7 @@ export function BarChart({ data, goal, color, colors }: { data: Bar[]; goal: num
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-end', height: 140, gap: 8 }}>
       {data.map((d, i) => (
-        <BarColumn key={d.label} value={d.value} max={max} color={d.value > goal ? colors.red : color} label={d.label} delay={i * 60} colors={colors} />
+        <BarColumn key={i} value={d.value} max={max} color={d.value > goal ? colors.red : color} label={d.label} delay={i * 60} colors={colors} />
       ))}
     </View>
   );

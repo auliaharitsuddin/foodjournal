@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/lib/useTheme';
 import { spacing, radius, type } from '@/lib/theme';
 import { useStore } from '@/lib/store';
 import { Button } from '@/components/Button';
+import { SheetHeader } from '@/components/SheetHeader';
+import { safeBack } from '@/lib/nav';
 
 export default function LogWeight() {
   const { colors } = useTheme();
@@ -18,14 +19,14 @@ export default function LogWeight() {
     if (!val || val <= 0) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     addWeight(val);
-    router.back();
+    safeBack();
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.lg }}>
-      <Text style={[type.title2, { color: colors.label, marginBottom: spacing.xl }]}>Catat Berat Badan</Text>
+      <SheetHeader title="Catat Berat Badan" />
 
-      <View style={{ alignItems: 'center', marginBottom: spacing.xl }}>
+      <View style={{ alignItems: 'center', marginBottom: spacing.xl, marginTop: spacing.md }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
           <TextInput
             value={kg}

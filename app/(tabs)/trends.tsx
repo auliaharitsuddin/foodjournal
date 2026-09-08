@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Dimensions, ScrollView, Text, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { LayoutChangeEvent, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,9 +10,6 @@ import { Card } from '@/components/Card';
 import { LineChart } from '@/components/LineChart';
 import { BarChart } from '@/components/BarChart';
 import { PressableScale } from '@/components/PressableScale';
-
-const { width } = Dimensions.get('window');
-const CHART_WIDTH = width - spacing.lg * 2 - spacing.lg * 2;
 
 function last7Days() {
   const days: Date[] = [];
@@ -33,6 +30,8 @@ export default function Trends() {
   const { colors } = useTheme();
   const { state } = useStore();
   const days = useMemo(() => last7Days(), []);
+  const [chartWidth, setChartWidth] = useState(0);
+  const onChartCardLayout = (e: LayoutChangeEvent) => setChartWidth(e.nativeEvent.layout.width - spacing.lg * 2);
 
   const calorieData = days.map((d) => ({
     label: d.toLocaleDateString('id-ID', { weekday: 'short' }).slice(0, 2),
@@ -52,7 +51,20 @@ export default function Trends() {
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: 140 }} showsVerticalScrollIndicator={false}>
         <Text style={[type.title1, { color: colors.label, marginBottom: spacing.lg }]}>Progres</Text>
 
-        <Card style={{ marginBottom: spacing.lg }}>
+        <PressableScale onPress={() => router.push('/insights')} style={{ marginBottom: spacing.lg }}>
+          <Card style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+            <View style={{ width: 44, height: 44, borderRadius: radius.md, backgroundColor: colors.indigo + '22', alignItems: 'center', justifyContent: 'center' }}>
+              <Ionicons name="sparkles" size={22} color={colors.indigo} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[type.bodyMedium, { color: colors.label }]}>Insight & Rekomendasi AI</Text>
+              <Text style={[type.footnote, { color: colors.labelSecondary }]}>Pola makan & saran kesehatan dari datamu</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.labelTertiary} />
+          </Card>
+        </PressableScale>
+
+        <Card style={{ marginBottom: spacing.lg }} onLayout={onChartCardLayout}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md }}>
             <View>
               <Text style={[type.footnote, { color: colors.labelSecondary }]}>Berat Badan</Text>
@@ -75,10 +87,10 @@ export default function Trends() {
               <Text style={[type.caption1, { color: '#fff' }]}>Catat</Text>
             </PressableScale>
           </View>
-          {weightSeries.length > 1 ? (
+          {weightSeries.length > 1 && chartWidth > 0 ? (
             <LineChart
               data={weightSeries.map((w) => w.kg)}
-              width={CHART_WIDTH}
+              width={chartWidth}
               height={120}
               color={colors.blue}
               fillColor={colors.blue + '18'}

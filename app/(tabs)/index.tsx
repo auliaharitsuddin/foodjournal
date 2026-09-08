@@ -77,10 +77,8 @@ export default function Home() {
                 <Text style={[type.footnote, { color: colors.labelSecondary }]}>kalori tersisa</Text>
               </View>
             </View>
-            <View style={{ flexDirection: 'row', width: '100%', gap: spacing.lg, marginBottom: spacing.xs }}>
+            <View style={{ flexDirection: 'row', width: '100%', gap: spacing.lg }}>
               <MacroBar label="Protein" value={todayTotals.protein} goal={goal.goalProteinG} unit="g" color={colors.pink} />
-            </View>
-            <View style={{ flexDirection: 'row', width: '100%', gap: spacing.lg, marginTop: spacing.md }}>
               <MacroBar label="Karbo" value={todayTotals.carbs} goal={goal.goalCarbsG} unit="g" color={colors.indigo} />
               <MacroBar label="Lemak" value={todayTotals.fat} goal={goal.goalFatG} unit="g" color={colors.teal} />
             </View>

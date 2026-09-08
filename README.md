@@ -21,12 +21,18 @@ auto-fill nutrition data — all without an account or backend server.
   maintain / gain) to compute personalized daily targets.
 - **Trends & charts** — visualize calorie, macro, water, and weight history.
 - **Notifications** — optional reminders via `expo-notifications`.
+- **Manual meal entry** — add a meal by hand when a barcode isn't available.
+- **AI insights** — an optional "Insights" screen that summarizes recent
+  eating patterns (via a lightweight knowledge graph built from logged
+  meals) and asks a Gemini model for a short, actionable nutrition
+  recommendation.
 - **Polished UI** — animated transitions (`moti` / `react-native-reanimated`),
   gradients, blur effects, and swipe-to-delete interactions.
 - **100% offline / local-first** — all data is persisted on-device with
   `AsyncStorage`. There is no user account system and no backend; the only
-  network call is the optional, keyless Open Food Facts lookup during
-  barcode scanning.
+  network calls are the optional, keyless Open Food Facts lookup during
+  barcode scanning, and the optional Gemini call for AI insights (only if
+  an API key is configured).
 
 ## Tech stack
 
@@ -48,6 +54,16 @@ automatically via `npx`).
 npm install
 npx expo start
 ```
+
+To enable the optional AI insights feature, create a `.env` file with:
+
+```
+EXPO_PUBLIC_GEMINI_API_KEY=<your Gemini API key>
+EXPO_PUBLIC_GEMINI_MODEL=<optional, defaults to gemini-3.6-flash>
+```
+
+This is not required for the app to run — every other feature works with
+no configuration.
 
 This opens the Expo developer tools. From there you can run the app on:
 
@@ -82,9 +98,89 @@ lib/
 
 - The in-app camera permission prompt and some UI copy are in Indonesian, as
   the app was originally built with Indonesian users in mind.
-- No API keys or secrets are required to run this project — the only
-  external API used (Open Food Facts) is free and keyless.
+- No API keys or secrets are required to run the core app — the only
+  external API used by default (Open Food Facts) is free and keyless. The
+  AI insights feature is optional and needs your own Gemini API key.
 
 ## License
 
 MIT — see [LICENSE](./LICENSE).
+
+---
+
+## Bahasa Indonesia
+
+### Deskripsi Proyek
+
+**FoodJournal** adalah aplikasi mobile pencatat makanan dan nutrisi yang
+sepenuhnya berjalan secara lokal (local-first), dibangun dengan Expo (React
+Native) dan TypeScript. Aplikasi ini menyelesaikan masalah sulitnya
+mencatat asupan kalori dan nutrisi harian tanpa perlu akun, server backend,
+atau koneksi internet yang konstan — semua data tersimpan di perangkat.
+
+### Fungsi
+
+- Mencatat makanan harian beserta kalori, protein, karbohidrat, dan lemak.
+- Memindai barcode kemasan makanan untuk mengambil data nutrisi otomatis.
+- Melacak target harian (kalori, makro, air) dan progres terhadap target.
+- Mencatat berat badan dan asupan air, serta menampilkan tren dari waktu
+  ke waktu.
+- Memberi rekomendasi pola makan berbasis AI (opsional) dari riwayat
+  makan 14 hari terakhir.
+
+### Semua Fitur
+
+- Pencatatan makan (breakfast/lunch/dinner/snack) dengan rincian kalori
+  dan makro.
+- Pemindaian barcode via kamera perangkat (`expo-camera`), mengambil data
+  dari API gratis dan tanpa kunci Open Food Facts.
+- Input makan manual (tanpa barcode).
+- Target harian personal (kalori, protein, karbo, lemak, air).
+- Pencatatan air minum dan berat badan, dengan grafik tren.
+- Alur onboarding (tinggi badan, berat awal, target berat, tingkat
+  aktivitas, tujuan) untuk menghitung target harian personal.
+- Insight AI opsional — ringkasan pola makan via knowledge graph
+  sederhana, lalu rekomendasi singkat dari model Gemini.
+- Notifikasi pengingat opsional (`expo-notifications`).
+- Swipe-to-delete, animasi transisi, gradient, dan efek blur.
+- 100% offline / local-first — data tersimpan via `AsyncStorage`, tanpa
+  akun pengguna dan tanpa server backend.
+
+### Istilah
+
+- **Local-first** — semua data disimpan di perangkat pengguna, bukan di
+  server.
+- **Macro (makro)** — makronutrien: protein, karbohidrat, lemak.
+- **Open Food Facts** — basis data nutrisi produk makanan sumber terbuka
+  dan gratis, dipakai untuk auto-fill hasil scan barcode.
+- **Knowledge graph** — struktur ringkasan pola makan (dibangun dari
+  data makan tersimpan) yang dipakai sebagai konteks untuk rekomendasi AI.
+- **Onboarding** — alur pengaturan awal saat pertama kali membuka
+  aplikasi.
+
+### Cara Menggunakan
+
+Membutuhkan [Node.js](https://nodejs.org/) dan Expo CLI (otomatis
+terpasang lewat `npx`).
+
+```bash
+npm install
+npx expo start
+```
+
+Lalu jalankan di:
+
+- **iOS Simulator**: tekan `i` (khusus macOS, perlu Xcode)
+- **Android Emulator**: tekan `a` (perlu Android Studio)
+- **Perangkat fisik**: scan QR code dengan aplikasi Expo Go
+- **Web**: tekan `w`
+
+Untuk mengaktifkan fitur insight AI (opsional), buat file `.env` berisi:
+
+```
+EXPO_PUBLIC_GEMINI_API_KEY=<isi dengan API key Gemini Anda>
+EXPO_PUBLIC_GEMINI_MODEL=<opsional, default gemini-3.6-flash>
+```
+
+Fitur ini opsional — seluruh fitur lain berjalan tanpa konfigurasi
+tambahan apa pun.

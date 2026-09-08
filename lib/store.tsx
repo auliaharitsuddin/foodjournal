@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { AppState, FoodItem, MealEntry, MealType, UserProfile, WaterEntry, WeightEntry } from './types';
-import { defaultState, loadState, saveState } from './storage';
+import { clearState, defaultState, loadState, saveState } from './storage';
 
 interface StoreValue {
   state: AppState;
@@ -12,6 +12,8 @@ interface StoreValue {
   addWater: (ml: number) => void;
   removeWater: (id: string) => void;
   addWeight: (kg: number) => void;
+  resetAll: () => void;
+  setAiRecommendation: (text: string) => void;
   todayMeals: MealEntry[];
   todayWater: WaterEntry[];
   todayTotals: { calories: number; protein: number; carbs: number; fat: number };
@@ -94,6 +96,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setState((prev) => ({ ...prev, weights: [entry, ...prev.weights] }));
   }, []);
 
+  const resetAll = useCallback(() => {
+    clearState();
+    setState(defaultState);
+  }, []);
+
+  const setAiRecommendation = useCallback((text: string) => {
+    setState((prev) => ({ ...prev, aiRecommendation: { text, generatedAt: new Date().toISOString() } }));
+  }, []);
+
   const today = new Date();
   const todayMeals = useMemo(() => state.meals.filter((m) => isSameDay(m.loggedAt, today)), [state.meals]);
   const todayWater = useMemo(() => state.water.filter((w) => isSameDay(w.loggedAt, today)), [state.water]);
@@ -140,6 +151,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     addWater,
     removeWater,
     addWeight,
+    resetAll,
+    setAiRecommendation,
     todayMeals,
     todayWater,
     todayTotals,

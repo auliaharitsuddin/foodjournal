@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Alert, ScrollView, Switch, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Platform, ScrollView, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/lib/useTheme';
@@ -8,14 +9,17 @@ import { spacing, radius, type } from '@/lib/theme';
 import { useStore } from '@/lib/store';
 import { Card } from '@/components/Card';
 import { PressableScale } from '@/components/PressableScale';
-import { enableDailyReminder, disableDailyReminder } from '@/lib/notifications';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { enableDailyReminder, disableDailyReminder, isReminderScheduled } from '@/lib/notifications';
 
 export default function Profile() {
   const { colors } = useTheme();
-  const { state, streakDays } = useStore();
+  const { state, streakDays, resetAll } = useStore();
   const [reminderOn, setReminderOn] = useState(false);
   const profile = state.profile;
+
+  useEffect(() => {
+    isReminderScheduled().then(setReminderOn);
+  }, []);
 
   const bmi = profile.heightCm > 0 ? (state.weights[0]?.kg ?? profile.startWeightKg) / Math.pow(profile.heightCm / 100, 2) : 0;
 
@@ -24,7 +28,14 @@ export default function Profile() {
     if (value) {
       const ok = await enableDailyReminder(19, 0);
       setReminderOn(ok);
-      if (!ok) Alert.alert('Izin ditolak', 'Aktifkan izin notifikasi di pengaturan sistem.');
+      if (!ok) {
+        Alert.alert(
+          Platform.OS === 'web' ? 'Tidak didukung di web' : 'Izin ditolak',
+          Platform.OS === 'web'
+            ? 'Pengingat harian hanya tersedia di aplikasi iOS/Android.'
+            : 'Aktifkan izin notifikasi di pengaturan sistem.'
+        );
+      }
     } else {
       await disableDailyReminder();
       setReminderOn(false);
@@ -37,10 +48,7 @@ export default function Profile() {
       {
         text: 'Hapus',
         style: 'destructive',
-        onPress: async () => {
-          await AsyncStorage.clear();
-          Alert.alert('Selesai', 'Silakan muat ulang aplikasi.');
-        },
+        onPress: () => resetAll(),
       },
     ]);
   };
@@ -72,7 +80,12 @@ export default function Profile() {
           </View>
         </Card>
 
-        <SectionLabel colors={colors}>Target Harian</SectionLabel>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm, marginLeft: spacing.xs }}>
+          <SectionLabel colors={colors} noMargin>Target Harian</SectionLabel>
+          <PressableScale onPress={() => router.push('/edit-profile')}>
+            <Text style={[type.footnote, { color: colors.blue }]}>Ubah Target</Text>
+          </PressableScale>
+        </View>
         <Card style={{ marginBottom: spacing.lg, gap: spacing.md }}>
           <GoalRow label="Kalori" value={`${profile.goalCalories} kal`} icon="flame" color={colors.orange} colors={colors} />
           <GoalRow label="Protein" value={`${profile.goalProteinG} g`} icon="barbell" color={colors.pink} colors={colors} />
@@ -88,10 +101,17 @@ export default function Profile() {
               <Ionicons name="notifications" size={20} color={colors.orange} />
               <View>
                 <Text style={[type.bodyMedium, { color: colors.label }]}>Pengingat Harian</Text>
-                <Text style={[type.footnote, { color: colors.labelSecondary }]}>Setiap jam 19:00</Text>
+                <Text style={[type.footnote, { color: colors.labelSecondary }]}>
+                  {Platform.OS === 'web' ? 'Hanya tersedia di iOS/Android' : 'Setiap jam 19:00'}
+                </Text>
               </View>
             </View>
-            <Switch value={reminderOn} onValueChange={toggleReminder} trackColor={{ true: colors.green }} />
+            <Switch
+              value={reminderOn}
+              onValueChange={toggleReminder}
+              trackColor={{ true: colors.green }}
+              disabled={Platform.OS === 'web'}
+            />
           </View>
         </Card>
 
@@ -116,9 +136,9 @@ function MiniStat({ label, value, colors }: { label: string; value: string; colo
   );
 }
 
-function SectionLabel({ children, colors }: { children: React.ReactNode; colors: any }) {
+function SectionLabel({ children, colors, noMargin }: { children: React.ReactNode; colors: any; noMargin?: boolean }) {
   return (
-    <Text style={[type.caption1, { color: colors.labelSecondary, marginBottom: spacing.sm, marginLeft: spacing.xs, textTransform: 'uppercase' }]}>
+    <Text style={[type.caption1, { color: colors.labelSecondary, textTransform: 'uppercase' }, !noMargin && { marginBottom: spacing.sm, marginLeft: spacing.xs }]}>
       {children}
     </Text>
   );

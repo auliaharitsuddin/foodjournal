@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/lib/useTheme';
 import { spacing, radius, type } from '@/lib/theme';
 import { useStore } from '@/lib/store';
 import { Button } from '@/components/Button';
 import { PressableScale } from '@/components/PressableScale';
+import { SheetHeader } from '@/components/SheetHeader';
+import { safeBack } from '@/lib/nav';
 
 const PRESETS = [
   { ml: 200, label: 'Gelas', emoji: '🥛' },
@@ -24,12 +25,12 @@ export default function LogWater() {
   const log = (ml: number) => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     addWater(ml);
-    router.back();
+    safeBack();
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.lg }}>
-      <Text style={[type.title2, { color: colors.label, marginBottom: 4 }]}>Catat Air Minum</Text>
+      <SheetHeader title="Catat Air Minum" />
       <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.xl }]}>
         {waterMl} / {state.profile.goalWaterMl} ml hari ini
       </Text>
