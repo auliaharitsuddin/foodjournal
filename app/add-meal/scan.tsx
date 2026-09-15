@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Text, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -51,6 +51,21 @@ export default function ScanBarcode() {
       },
     });
   };
+
+  if (Platform.OS === 'web') {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.xl, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 44, textAlign: 'center', marginBottom: spacing.md }}>📱</Text>
+        <Text style={[type.title2, { color: colors.label, textAlign: 'center', marginBottom: spacing.sm }]}>
+          Pindai Barcode Butuh Aplikasi Mobile
+        </Text>
+        <Text style={[type.body, { color: colors.labelSecondary, textAlign: 'center', marginBottom: spacing.xl }]}>
+          Fitur pindai barcode belum tersedia di versi web. Buka FoodJournal di aplikasi iOS/Android untuk memindai kemasan makanan.
+        </Text>
+        <Button title="Kembali" variant="secondary" onPress={safeBack} />
+      </SafeAreaView>
+    );
+  }
 
   if (!permission) return <View style={{ flex: 1, backgroundColor: '#000' }} />;
 
