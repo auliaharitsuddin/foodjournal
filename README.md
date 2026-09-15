@@ -1,5 +1,7 @@
 # FoodJournal
 
+**Live demo:** https://auliaharitsuddin.github.io/foodjournal/ (web export — barcode/camera scanning needs the mobile app and shows a message in-browser instead)
+
 A local-first mobile food and nutrition tracker built with [Expo](https://expo.dev)
 (React Native) and TypeScript. Log meals, track daily macro goals, monitor
 water intake and body weight over time, and scan food packaging barcodes to
@@ -111,6 +113,8 @@ MIT — see [LICENSE](./LICENSE).
 ## Bahasa Indonesia
 
 ### Deskripsi Proyek
+
+**Demo live:** https://auliaharitsuddin.github.io/foodjournal/ (versi web — pemindaian barcode/kamera butuh aplikasi mobile, di browser hanya muncul pesan pengganti)
 
 **FoodJournal** adalah aplikasi mobile pencatat makanan dan nutrisi yang
 sepenuhnya berjalan secara lokal (local-first), dibangun dengan Expo (React
