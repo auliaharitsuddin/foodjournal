@@ -14,6 +14,7 @@ import {
   Inter_800ExtraBold,
 } from '@expo-google-fonts/inter';
 import { StoreProvider, useStore } from '@/lib/store';
+import { LanguageProvider } from '@/lib/i18n';
 import { palette } from '@/lib/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -103,9 +104,11 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <StoreProvider>
-        <RootNavigator />
-      </StoreProvider>
+      <LanguageProvider>
+        <StoreProvider>
+          <RootNavigator />
+        </StoreProvider>
+      </LanguageProvider>
     </GestureHandlerRootView>
   );
 }

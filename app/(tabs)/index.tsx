@@ -13,26 +13,28 @@ import { MacroBar } from '@/components/MacroBar';
 import { MealCard } from '@/components/MealCard';
 import { PressableScale } from '@/components/PressableScale';
 import { MealType } from '@/lib/types';
+import { useLanguage } from '@/lib/i18n';
 
-const MEAL_TYPES: { key: MealType; label: string; emoji: string }[] = [
-  { key: 'breakfast', label: 'Sarapan', emoji: '🌅' },
-  { key: 'lunch', label: 'Makan Siang', emoji: '☀️' },
-  { key: 'dinner', label: 'Makan Malam', emoji: '🌙' },
-  { key: 'snack', label: 'Camilan', emoji: '🍿' },
-];
-
-function greeting() {
+function greeting(t: ReturnType<typeof useLanguage>['t']) {
   const h = new Date().getHours();
-  if (h < 11) return 'Selamat Pagi';
-  if (h < 15) return 'Selamat Siang';
-  if (h < 18) return 'Selamat Sore';
-  return 'Selamat Malam';
+  if (h < 11) return t.greetMorning;
+  if (h < 15) return t.greetNoon;
+  if (h < 18) return t.greetAfternoon;
+  return t.greetEvening;
 }
 
 export default function Home() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const { state, todayMeals, todayWater, todayTotals, streakDays, removeMeal, addWater } = useStore();
   const goal = state.profile;
+
+  const MEAL_TYPES: { key: MealType; label: string; emoji: string }[] = [
+    { key: 'breakfast', label: t.mealBreakfast, emoji: '🌅' },
+    { key: 'lunch', label: t.mealLunch, emoji: '☀️' },
+    { key: 'dinner', label: t.mealDinner, emoji: '🌙' },
+    { key: 'snack', label: t.mealSnack, emoji: '🍿' },
+  ];
 
   const remaining = Math.max(goal.goalCalories - todayTotals.calories, 0);
   const waterMl = todayWater.reduce((a, w) => a + w.ml, 0);
@@ -46,7 +48,7 @@ export default function Home() {
             <View>
               <Text style={[type.footnote, { color: colors.labelSecondary }]}>{dateStr}</Text>
               <Text style={[type.title1, { color: colors.label }]}>
-                {greeting()}, {goal.name || 'kamu'} 👋
+                {greeting(t)}, {goal.name || t.you} 👋
               </Text>
             </View>
             {streakDays > 0 && (
@@ -74,13 +76,13 @@ export default function Home() {
               <ActivityRing size={200} strokeWidth={16} progress={todayTotals.calories / goal.goalCalories} color={colors.orange} trackColor={colors.fill} />
               <View style={{ position: 'absolute', alignItems: 'center' }}>
                 <Text style={[type.largeTitle, { color: colors.label }]}>{remaining}</Text>
-                <Text style={[type.footnote, { color: colors.labelSecondary }]}>kalori tersisa</Text>
+                <Text style={[type.footnote, { color: colors.labelSecondary }]}>{t.caloriesLeft}</Text>
               </View>
             </View>
             <View style={{ flexDirection: 'row', width: '100%', gap: spacing.lg }}>
-              <MacroBar label="Protein" value={todayTotals.protein} goal={goal.goalProteinG} unit="g" color={colors.pink} />
-              <MacroBar label="Karbo" value={todayTotals.carbs} goal={goal.goalCarbsG} unit="g" color={colors.indigo} />
-              <MacroBar label="Lemak" value={todayTotals.fat} goal={goal.goalFatG} unit="g" color={colors.teal} />
+              <MacroBar label={t.protein} value={todayTotals.protein} goal={goal.goalProteinG} unit="g" color={colors.pink} />
+              <MacroBar label={t.carbs} value={todayTotals.carbs} goal={goal.goalCarbsG} unit="g" color={colors.indigo} />
+              <MacroBar label={t.fat} value={todayTotals.fat} goal={goal.goalFatG} unit="g" color={colors.teal} />
             </View>
           </Card>
         </MotiView>
@@ -92,7 +94,7 @@ export default function Home() {
                 <Ionicons name="water" size={22} color={colors.teal} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[type.bodyMedium, { color: colors.label }]}>Air Minum</Text>
+                <Text style={[type.bodyMedium, { color: colors.label }]}>{t.waterIntake}</Text>
                 <Text style={[type.footnote, { color: colors.labelSecondary }]}>
                   {waterMl} / {goal.goalWaterMl} ml
                 </Text>
@@ -111,7 +113,7 @@ export default function Home() {
           </PressableScale>
         </MotiView>
 
-        <Text style={[type.title3, { color: colors.label, marginBottom: spacing.md }]}>Tambah Makan</Text>
+        <Text style={[type.title3, { color: colors.label, marginBottom: spacing.md }]}>{t.addMeal}</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl }}>
           {MEAL_TYPES.map((m) => (
             <PressableScale
@@ -134,14 +136,14 @@ export default function Home() {
         </View>
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md }}>
-          <Text style={[type.title3, { color: colors.label }]}>Makan Hari Ini</Text>
-          <Text style={[type.footnote, { color: colors.labelSecondary }]}>{todayMeals.length} item</Text>
+          <Text style={[type.title3, { color: colors.label }]}>{t.todayMeals}</Text>
+          <Text style={[type.footnote, { color: colors.labelSecondary }]}>{t.itemsCount(todayMeals.length)}</Text>
         </View>
 
         {todayMeals.length === 0 ? (
           <Card style={{ alignItems: 'center', paddingVertical: spacing.xxl }}>
             <Text style={{ fontSize: 32, marginBottom: spacing.sm }}>🍽️</Text>
-            <Text style={[type.subhead, { color: colors.labelSecondary }]}>Belum ada makanan dicatat</Text>
+            <Text style={[type.subhead, { color: colors.labelSecondary }]}>{t.noMealsYet}</Text>
           </Card>
         ) : (
           <View style={{ gap: spacing.sm }}>

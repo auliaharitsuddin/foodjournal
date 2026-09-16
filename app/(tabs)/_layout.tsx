@@ -7,6 +7,7 @@ import * as Haptics from 'expo-haptics';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTheme } from '@/lib/useTheme';
 import { springConfig } from '@/lib/theme';
+import { useLanguage } from '@/lib/i18n';
 
 function TabButton(props: any) {
   const scale = useSharedValue(1);
@@ -41,6 +42,7 @@ function TabButton(props: any) {
 
 export default function TabsLayout() {
   const { colors, isDark } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <Tabs
@@ -80,7 +82,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Hari Ini',
+          title: t.tabHome,
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name={focused ? 'sunny' : 'sunny-outline'} size={size} color={color} />
           ),
@@ -89,7 +91,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="diary"
         options={{
-          title: 'Jurnal',
+          title: t.tabDiary,
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name={focused ? 'book' : 'book-outline'} size={size} color={color} />
           ),
@@ -98,7 +100,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="trends"
         options={{
-          title: 'Progres',
+          title: t.tabTrends,
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} size={size} color={color} />
           ),
@@ -107,7 +109,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profil',
+          title: t.tabProfile,
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name={focused ? 'person-circle' : 'person-circle-outline'} size={size} color={color} />
           ),

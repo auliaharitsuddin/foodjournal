@@ -9,6 +9,10 @@ auto-fill nutrition data — all without an account or backend server.
 
 ## Features
 
+- **Indonesian/English language toggle** (`lib/i18n.tsx`) on the Profile
+  tab, persisted on-device. Covers navigation, the home screen, and the
+  Profile tab; other screens (Diary, Trends, Add Meal, food detail) still
+  show Indonesian text regardless of the toggle.
 - **Meal logging** — add meals to breakfast, lunch, dinner, or snack, with
   calories, protein, carbs, and fat tracked per entry.
 - **Barcode scanning** — scan a product's barcode with the device camera
@@ -134,6 +138,10 @@ atau koneksi internet yang konstan — semua data tersimpan di perangkat.
 
 ### Semua Fitur
 
+- Toggle bahasa Indonesia/Inggris (`lib/i18n.tsx`) di tab Profil, tersimpan
+  di perangkat. Mencakup navigasi, layar beranda, dan tab Profil; layar
+  lain (Jurnal, Progres, Tambah Makan, detail makanan) masih tampil dalam
+  Bahasa Indonesia apa pun pilihan togglenya.
 - Pencatatan makan (breakfast/lunch/dinner/snack) dengan rincian kalori
   dan makro.
 - Pemindaian barcode via kamera perangkat (`expo-camera`), mengambil data

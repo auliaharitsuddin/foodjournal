@@ -10,9 +10,11 @@ import { useStore } from '@/lib/store';
 import { Card } from '@/components/Card';
 import { PressableScale } from '@/components/PressableScale';
 import { enableDailyReminder, disableDailyReminder, isReminderScheduled } from '@/lib/notifications';
+import { useLanguage } from '@/lib/i18n';
 
 export default function Profile() {
   const { colors } = useTheme();
+  const { t, lang, setLang } = useLanguage();
   const { state, streakDays, resetAll } = useStore();
   const [reminderOn, setReminderOn] = useState(false);
   const profile = state.profile;
@@ -43,10 +45,10 @@ export default function Profile() {
   };
 
   const resetData = () => {
-    Alert.alert('Hapus Semua Data?', 'Semua catatan makanan, air, dan berat badan akan dihapus permanen.', [
-      { text: 'Batal', style: 'cancel' },
+    Alert.alert(t.resetConfirmTitle, t.resetConfirmMsg, [
+      { text: t.cancel, style: 'cancel' },
       {
-        text: 'Hapus',
+        text: t.confirm,
         style: 'destructive',
         onPress: () => resetAll(),
       },
@@ -56,7 +58,7 @@ export default function Profile() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: 140 }} showsVerticalScrollIndicator={false}>
-        <Text style={[type.title1, { color: colors.label, marginBottom: spacing.lg }]}>Profil</Text>
+        <Text style={[type.title1, { color: colors.label, marginBottom: spacing.lg }]}>{t.profileTitle}</Text>
 
         <Card style={{ alignItems: 'center', marginBottom: spacing.lg }}>
           <View
@@ -81,17 +83,38 @@ export default function Profile() {
         </Card>
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm, marginLeft: spacing.xs }}>
-          <SectionLabel colors={colors} noMargin>Target Harian</SectionLabel>
+          <SectionLabel colors={colors} noMargin>{t.dailyGoals}</SectionLabel>
           <PressableScale onPress={() => router.push('/edit-profile')}>
-            <Text style={[type.footnote, { color: colors.blue }]}>Ubah Target</Text>
+            <Text style={[type.footnote, { color: colors.blue }]}>{t.editProfile}</Text>
           </PressableScale>
         </View>
         <Card style={{ marginBottom: spacing.lg, gap: spacing.md }}>
           <GoalRow label="Kalori" value={`${profile.goalCalories} kal`} icon="flame" color={colors.orange} colors={colors} />
-          <GoalRow label="Protein" value={`${profile.goalProteinG} g`} icon="barbell" color={colors.pink} colors={colors} />
-          <GoalRow label="Karbohidrat" value={`${profile.goalCarbsG} g`} icon="leaf" color={colors.indigo} colors={colors} />
-          <GoalRow label="Lemak" value={`${profile.goalFatG} g`} icon="water" color={colors.teal} colors={colors} />
-          <GoalRow label="Air Minum" value={`${profile.goalWaterMl} ml`} icon="water-outline" color={colors.blue} colors={colors} />
+          <GoalRow label={t.protein} value={`${profile.goalProteinG} g`} icon="barbell" color={colors.pink} colors={colors} />
+          <GoalRow label={t.carbs} value={`${profile.goalCarbsG} g`} icon="leaf" color={colors.indigo} colors={colors} />
+          <GoalRow label={t.fat} value={`${profile.goalFatG} g`} icon="water" color={colors.teal} colors={colors} />
+          <GoalRow label={t.waterIntake} value={`${profile.goalWaterMl} ml`} icon="water-outline" color={colors.blue} colors={colors} />
+        </Card>
+
+        <SectionLabel colors={colors}>{t.language}</SectionLabel>
+        <Card style={{ marginBottom: spacing.lg, flexDirection: 'row', gap: spacing.sm }}>
+          {(['id', 'en'] as const).map((l) => (
+            <PressableScale
+              key={l}
+              onPress={() => setLang(l)}
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                paddingVertical: spacing.sm,
+                borderRadius: radius.md,
+                backgroundColor: lang === l ? colors.blue : colors.fill,
+              }}
+            >
+              <Text style={[type.bodyMedium, { color: lang === l ? '#fff' : colors.label }]}>
+                {l === 'id' ? 'Indonesia' : 'English'}
+              </Text>
+            </PressableScale>
+          ))}
         </Card>
 
         <SectionLabel colors={colors}>Pengaturan</SectionLabel>
@@ -116,7 +139,7 @@ export default function Profile() {
         </Card>
 
         <PressableScale onPress={resetData} style={{ alignItems: 'center', padding: spacing.md }}>
-          <Text style={[type.subhead, { color: colors.red }]}>Hapus Semua Data</Text>
+          <Text style={[type.subhead, { color: colors.red }]}>{t.resetData}</Text>
         </PressableScale>
 
         <Text style={[type.caption1, { color: colors.labelTertiary, textAlign: 'center', marginTop: spacing.xl }]}>
