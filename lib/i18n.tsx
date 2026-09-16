@@ -116,6 +116,16 @@ function dictFor(lang: Lang) {
     allSetDesc: 'Kami sudah menyiapkan target kalori & nutrisi harian yang disesuaikan untukmu. Kamu bisa mengubahnya kapan saja di halaman Profil.',
     startTracking: 'Mulai Catat',
     youDefault: 'Kamu',
+
+    settingsSection: 'Pengaturan',
+    dailyReminder: 'Pengingat Harian',
+    reminderNotSupportedWeb: 'Tidak didukung di web',
+    reminderDeniedTitle: 'Izin ditolak',
+    reminderWebOnlyMobile: 'Pengingat harian hanya tersedia di aplikasi iOS/Android.',
+    reminderEnableInSettings: 'Aktifkan izin notifikasi di pengaturan sistem.',
+    reminderWebHint: 'Hanya tersedia di iOS/Android',
+    reminderTimeHint: 'Setiap jam 19:00',
+    madeWith: 'FoodJournal · dibuat dengan 🧡',
   };
 
   const en: typeof id = {
@@ -229,6 +239,16 @@ function dictFor(lang: Lang) {
     allSetDesc: "We've set up daily calorie & nutrition targets tailored for you. You can change them anytime on the Profile page.",
     startTracking: 'Start Tracking',
     youDefault: 'You',
+
+    settingsSection: 'Settings',
+    dailyReminder: 'Daily Reminder',
+    reminderNotSupportedWeb: 'Not supported on web',
+    reminderDeniedTitle: 'Permission denied',
+    reminderWebOnlyMobile: 'Daily reminders are only available in the iOS/Android app.',
+    reminderEnableInSettings: 'Enable notification permission in system settings.',
+    reminderWebHint: 'Only available on iOS/Android',
+    reminderTimeHint: 'Every day at 7:00 PM',
+    madeWith: 'FoodJournal · made with 🧡',
   };
 
   return lang === 'id' ? id : en;

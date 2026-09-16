@@ -32,10 +32,8 @@ export default function Profile() {
       setReminderOn(ok);
       if (!ok) {
         Alert.alert(
-          Platform.OS === 'web' ? 'Tidak didukung di web' : 'Izin ditolak',
-          Platform.OS === 'web'
-            ? 'Pengingat harian hanya tersedia di aplikasi iOS/Android.'
-            : 'Aktifkan izin notifikasi di pengaturan sistem.'
+          Platform.OS === 'web' ? t.reminderNotSupportedWeb : t.reminderDeniedTitle,
+          Platform.OS === 'web' ? t.reminderWebOnlyMobile : t.reminderEnableInSettings
         );
       }
     } else {
@@ -117,15 +115,15 @@ export default function Profile() {
           ))}
         </Card>
 
-        <SectionLabel colors={colors}>Pengaturan</SectionLabel>
+        <SectionLabel colors={colors}>{t.settingsSection}</SectionLabel>
         <Card style={{ marginBottom: spacing.lg }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
               <Ionicons name="notifications" size={20} color={colors.orange} />
               <View>
-                <Text style={[type.bodyMedium, { color: colors.label }]}>Pengingat Harian</Text>
+                <Text style={[type.bodyMedium, { color: colors.label }]}>{t.dailyReminder}</Text>
                 <Text style={[type.footnote, { color: colors.labelSecondary }]}>
-                  {Platform.OS === 'web' ? 'Hanya tersedia di iOS/Android' : 'Setiap jam 19:00'}
+                  {Platform.OS === 'web' ? t.reminderWebHint : t.reminderTimeHint}
                 </Text>
               </View>
             </View>
@@ -143,7 +141,7 @@ export default function Profile() {
         </PressableScale>
 
         <Text style={[type.caption1, { color: colors.labelTertiary, textAlign: 'center', marginTop: spacing.xl }]}>
-          FoodJournal · dibuat dengan 🧡
+          {t.madeWith}
         </Text>
       </ScrollView>
     </SafeAreaView>
