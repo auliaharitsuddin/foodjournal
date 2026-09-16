@@ -7,9 +7,11 @@ import { useStore } from '@/lib/store';
 import { Button } from '@/components/Button';
 import { SheetHeader } from '@/components/SheetHeader';
 import { safeBack } from '@/lib/nav';
+import { useLanguage } from '@/lib/i18n';
 
 export default function LogWeight() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const { addWeight, state } = useStore();
   const lastWeight = state.weights[0]?.kg ?? state.profile.startWeightKg;
   const [kg, setKg] = useState(String(lastWeight));
@@ -24,7 +26,7 @@ export default function LogWeight() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.lg }}>
-      <SheetHeader title="Catat Berat Badan" />
+      <SheetHeader title={t.logWeightTitle} />
 
       <View style={{ alignItems: 'center', marginBottom: spacing.xl, marginTop: spacing.md }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
@@ -38,11 +40,11 @@ export default function LogWeight() {
           <Text style={[type.title2, { color: colors.labelSecondary }]}>kg</Text>
         </View>
         <Text style={[type.footnote, { color: colors.labelSecondary, marginTop: spacing.sm }]}>
-          Target: {state.profile.goalWeightKg} kg
+          {t.targetKg(state.profile.goalWeightKg)}
         </Text>
       </View>
 
-      <Button title="Simpan" onPress={save} />
+      <Button title={t.save} onPress={save} />
     </View>
   );
 }

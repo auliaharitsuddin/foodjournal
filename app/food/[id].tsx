@@ -11,9 +11,11 @@ import { Button } from '@/components/Button';
 import { PressableScale } from '@/components/PressableScale';
 import { FoodItem, MealType } from '@/lib/types';
 import { safeBack, safeDismissAll } from '@/lib/nav';
+import { useLanguage } from '@/lib/i18n';
 
 export default function FoodDetail() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const { addMeal } = useStore();
   const params = useLocalSearchParams<{
     id: string;
@@ -31,14 +33,14 @@ export default function FoodDetail() {
   const dbFood = FOOD_DATABASE.find((f) => f.id === params.id);
   const food: FoodItem = dbFood ?? {
     id: params.id,
-    name: params.name ?? 'Makanan',
+    name: params.name ?? t.defaultFoodName,
     emoji: params.emoji ?? '📦',
     caloriesPer100g: Number(params.cal ?? 0),
     proteinPer100g: Number(params.protein ?? 0),
     carbsPer100g: Number(params.carbs ?? 0),
     fatPer100g: Number(params.fat ?? 0),
     defaultServingG: Number(params.servingG ?? 100),
-    servingLabel: params.servingLabel ?? '1 porsi',
+    servingLabel: params.servingLabel ?? t.servingDefault,
   };
 
   const [grams, setGrams] = useState(food.defaultServingG);
@@ -120,7 +122,7 @@ export default function FoodDetail() {
               { outlineWidth: 0 } as any, // web-only outline reset, no-op on native
             ]}
           />
-          <Text style={[type.footnote, { color: colors.labelSecondary }]}>gram (ketuk untuk ubah)</Text>
+          <Text style={[type.footnote, { color: colors.labelSecondary }]}>{t.tapToChangeGrams}</Text>
         </View>
         <PressableScale
           onPress={() => adjust(10)}
@@ -151,13 +153,13 @@ export default function FoodDetail() {
       </View>
 
       <View style={{ flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.lg, padding: spacing.lg, marginBottom: spacing.xl }}>
-        <Stat label="Kalori" value={Math.round(food.caloriesPer100g * factor)} unit="kal" color={colors.orange} />
-        <Stat label="Protein" value={Math.round(food.proteinPer100g * factor * 10) / 10} unit="g" color={colors.pink} />
-        <Stat label="Karbo" value={Math.round(food.carbsPer100g * factor * 10) / 10} unit="g" color={colors.indigo} />
-        <Stat label="Lemak" value={Math.round(food.fatPer100g * factor * 10) / 10} unit="g" color={colors.teal} />
+        <Stat label={t.caloriesLabel} value={Math.round(food.caloriesPer100g * factor)} unit={t.kal} color={colors.orange} />
+        <Stat label={t.protein} value={Math.round(food.proteinPer100g * factor * 10) / 10} unit="g" color={colors.pink} />
+        <Stat label={t.carbs} value={Math.round(food.carbsPer100g * factor * 10) / 10} unit="g" color={colors.indigo} />
+        <Stat label={t.fat} value={Math.round(food.fatPer100g * factor * 10) / 10} unit="g" color={colors.teal} />
       </View>
 
-      <Button title="Tambahkan ke Jurnal" onPress={confirm} />
+      <Button title={t.addToJournal} onPress={confirm} />
     </View>
   );
 }

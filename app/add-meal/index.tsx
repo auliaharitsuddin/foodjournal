@@ -9,12 +9,14 @@ import { PressableScale } from '@/components/PressableScale';
 import { Segmented } from '@/components/Segmented';
 import { SheetHeader } from '@/components/SheetHeader';
 import { MealType } from '@/lib/types';
+import { useLanguage } from '@/lib/i18n';
 
 const MEAL_LABELS: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
-const MEAL_LABEL_TEXT = ['Sarapan', 'Siang', 'Malam', 'Camilan'];
 
 export default function AddMeal() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
+  const MEAL_LABEL_TEXT = [t.segBreakfast, t.segLunch, t.segDinner, t.segSnack];
   const params = useLocalSearchParams<{ mealType?: string }>();
   const [query, setQuery] = useState('');
   const initialIndex = Math.max(0, MEAL_LABELS.indexOf((params.mealType as MealType) ?? 'snack'));
@@ -25,7 +27,7 @@ export default function AddMeal() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.lg }}>
-      <SheetHeader title="Tambah Makanan" />
+      <SheetHeader title={t.addFoodTitle} />
 
       <Segmented options={MEAL_LABEL_TEXT} value={mealIndex} onChange={setMealIndex} />
 
@@ -45,7 +47,7 @@ export default function AddMeal() {
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Cari makanan..."
+          placeholder={t.searchFoodPlaceholder}
           placeholderTextColor={colors.labelTertiary}
           style={[type.body, { color: colors.label, flex: 1, paddingVertical: spacing.md, paddingHorizontal: spacing.sm }]}
         />
@@ -66,7 +68,7 @@ export default function AddMeal() {
           }}
         >
           <Ionicons name="barcode-outline" size={20} color="#fff" />
-          <Text style={[type.headline, { color: '#fff' }]}>Scan Barcode</Text>
+          <Text style={[type.headline, { color: '#fff' }]}>{t.scanBarcode}</Text>
         </PressableScale>
         <PressableScale
           onPress={() => router.push({ pathname: '/add-meal/manual', params: { mealType } })}
@@ -82,7 +84,7 @@ export default function AddMeal() {
           }}
         >
           <Ionicons name="create-outline" size={20} color={colors.label} />
-          <Text style={[type.headline, { color: colors.label }]}>Tambah Manual</Text>
+          <Text style={[type.headline, { color: colors.label }]}>{t.addManual}</Text>
         </PressableScale>
       </View>
 
@@ -107,7 +109,7 @@ export default function AddMeal() {
             <View style={{ flex: 1 }}>
               <Text style={[type.bodyMedium, { color: colors.label }]}>{item.name}</Text>
               <Text style={[type.footnote, { color: colors.labelSecondary }]}>
-                {item.caloriesPer100g} kal / 100g · {item.servingLabel}
+                {t.caloriesPer100g(item.caloriesPer100g)} · {item.servingLabel}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={colors.labelTertiary} />
@@ -116,9 +118,9 @@ export default function AddMeal() {
         ListEmptyComponent={
           <View style={{ alignItems: 'center', paddingTop: spacing.xxl }}>
             <Text style={{ fontSize: 32, marginBottom: spacing.sm }}>🔍</Text>
-            <Text style={[type.subhead, { color: colors.labelSecondary }]}>Makanan tidak ditemukan</Text>
+            <Text style={[type.subhead, { color: colors.labelSecondary }]}>{t.foodNotFound}</Text>
             <Text style={[type.footnote, { color: colors.labelTertiary, textAlign: 'center', marginTop: spacing.xs }]}>
-              Coba kata kunci lain atau scan barcode kemasan
+              {t.tryOtherKeyword}
             </Text>
           </View>
         }

@@ -8,16 +8,17 @@ import { Button } from '@/components/Button';
 import { PressableScale } from '@/components/PressableScale';
 import { SheetHeader } from '@/components/SheetHeader';
 import { safeBack } from '@/lib/nav';
-
-const PRESETS = [
-  { ml: 200, label: 'Gelas', emoji: '🥛' },
-  { ml: 330, label: 'Botol Kecil', emoji: '🧴' },
-  { ml: 600, label: 'Botol Besar', emoji: '🍶' },
-  { ml: 1000, label: '1 Liter', emoji: '💧' },
-];
+import { useLanguage } from '@/lib/i18n';
 
 export default function LogWater() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
+  const PRESETS = [
+    { ml: 200, label: t.presetGlass, emoji: '🥛' },
+    { ml: 330, label: t.presetSmallBottle, emoji: '🧴' },
+    { ml: 600, label: t.presetBigBottle, emoji: '🍶' },
+    { ml: 1000, label: t.presetOneLiter, emoji: '💧' },
+  ];
   const { addWater, todayWater, state } = useStore();
   const [custom, setCustom] = useState(250);
   const waterMl = todayWater.reduce((a, w) => a + w.ml, 0);
@@ -30,9 +31,9 @@ export default function LogWater() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.lg }}>
-      <SheetHeader title="Catat Air Minum" />
+      <SheetHeader title={t.logWaterTitle} />
       <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.xl }]}>
-        {waterMl} / {state.profile.goalWaterMl} ml hari ini
+        {t.mlToday(waterMl, state.profile.goalWaterMl)}
       </Text>
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl }}>
@@ -57,7 +58,7 @@ export default function LogWater() {
         ))}
       </View>
 
-      <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.sm }]}>Jumlah kustom</Text>
+      <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.sm }]}>{t.customAmount}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.lg, marginBottom: spacing.xl }}>
         <PressableScale
           onPress={() => setCustom((c) => Math.max(50, c - 50))}
@@ -74,7 +75,7 @@ export default function LogWater() {
         </PressableScale>
       </View>
 
-      <Button title={`Tambah ${custom} ml`} onPress={() => log(custom)} />
+      <Button title={t.addMl(custom)} onPress={() => log(custom)} />
     </View>
   );
 }

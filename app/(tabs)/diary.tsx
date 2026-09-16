@@ -9,13 +9,7 @@ import { MealCard } from '@/components/MealCard';
 import { Card } from '@/components/Card';
 import { PressableScale } from '@/components/PressableScale';
 import { MealType } from '@/lib/types';
-
-const MEAL_SECTIONS: { key: MealType; label: string; emoji: string }[] = [
-  { key: 'breakfast', label: 'Sarapan', emoji: '🌅' },
-  { key: 'lunch', label: 'Makan Siang', emoji: '☀️' },
-  { key: 'dinner', label: 'Makan Malam', emoji: '🌙' },
-  { key: 'snack', label: 'Camilan', emoji: '🍿' },
-];
+import { useLanguage } from '@/lib/i18n';
 
 function isSameDay(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
@@ -34,9 +28,17 @@ function last14Days() {
 
 export default function Diary() {
   const { colors } = useTheme();
+  const { t, lang } = useLanguage();
   const { state, removeMeal } = useStore();
   const [selected, setSelected] = useState(new Date());
   const days = useMemo(() => last14Days(), []);
+
+  const MEAL_SECTIONS: { key: MealType; label: string; emoji: string }[] = [
+    { key: 'breakfast', label: t.mealBreakfast, emoji: '🌅' },
+    { key: 'lunch', label: t.mealLunch, emoji: '☀️' },
+    { key: 'dinner', label: t.mealDinner, emoji: '🌙' },
+    { key: 'snack', label: t.mealSnack, emoji: '🍿' },
+  ];
 
   const dayMeals = useMemo(() => state.meals.filter((m) => isSameDay(new Date(m.loggedAt), selected)), [state.meals, selected]);
 
@@ -47,7 +49,7 @@ export default function Diary() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
-      <Text style={[type.title1, { color: colors.label, paddingHorizontal: spacing.lg, marginBottom: spacing.md }]}>Jurnal</Text>
+      <Text style={[type.title1, { color: colors.label, paddingHorizontal: spacing.lg, marginBottom: spacing.md }]}>{t.tabDiary}</Text>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: spacing.sm }}>
         {days.map((d) => {
@@ -66,7 +68,7 @@ export default function Diary() {
               }}
             >
               <Text style={[type.caption1, { color: active ? 'rgba(255,255,255,0.8)' : colors.labelSecondary }]}>
-                {d.toLocaleDateString('id-ID', { weekday: 'short' }).slice(0, 2)}
+                {d.toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { weekday: 'short' }).slice(0, 2)}
               </Text>
               <Text style={[type.headline, { color: active ? '#fff' : colors.label, marginVertical: 2 }]}>{d.getDate()}</Text>
               <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: hasEntries ? (active ? '#fff' : colors.orange) : 'transparent' }} />
@@ -77,10 +79,10 @@ export default function Diary() {
 
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: 140 }} showsVerticalScrollIndicator={false}>
         <Card style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: spacing.lg }}>
-          <TotalStat label="Kalori" value={totals.calories} color={colors.orange} />
-          <TotalStat label="Protein" value={totals.protein} color={colors.pink} unit="g" />
-          <TotalStat label="Karbo" value={totals.carbs} color={colors.indigo} unit="g" />
-          <TotalStat label="Lemak" value={totals.fat} color={colors.teal} unit="g" />
+          <TotalStat label={t.caloriesLabel} value={totals.calories} color={colors.orange} />
+          <TotalStat label={t.protein} value={totals.protein} color={colors.pink} unit="g" />
+          <TotalStat label={t.carbs} value={totals.carbs} color={colors.indigo} unit="g" />
+          <TotalStat label={t.fat} value={totals.fat} color={colors.teal} unit="g" />
         </Card>
 
         {MEAL_SECTIONS.map((section, idx) => {
@@ -98,7 +100,7 @@ export default function Diary() {
                 <Text>{section.emoji}</Text>
                 <Text style={[type.headline, { color: colors.label }]}>{section.label}</Text>
                 <Text style={[type.footnote, { color: colors.labelSecondary }]}>
-                  · {meals.reduce((a, m) => a + m.calories, 0)} kal
+                  · {meals.reduce((a, m) => a + m.calories, 0)} {t.kal}
                 </Text>
               </View>
               <View style={{ gap: spacing.sm }}>
@@ -113,7 +115,7 @@ export default function Diary() {
         {dayMeals.length === 0 && (
           <Card style={{ alignItems: 'center', paddingVertical: spacing.xxl }}>
             <Text style={{ fontSize: 32, marginBottom: spacing.sm }}>📖</Text>
-            <Text style={[type.subhead, { color: colors.labelSecondary }]}>Tidak ada catatan di hari ini</Text>
+            <Text style={[type.subhead, { color: colors.labelSecondary }]}>{t.diaryEmpty}</Text>
           </Card>
         )}
       </ScrollView>

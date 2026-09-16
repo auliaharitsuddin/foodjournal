@@ -5,9 +5,11 @@ import { useTheme } from '@/lib/useTheme';
 import { spacing, radius, type } from '@/lib/theme';
 import { Button } from '@/components/Button';
 import { SheetHeader } from '@/components/SheetHeader';
+import { useLanguage } from '@/lib/i18n';
 
 export default function ManualEntry() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const params = useLocalSearchParams<{ mealType?: string }>();
   const [name, setName] = useState('');
   const [cal, setCal] = useState('');
@@ -35,7 +37,7 @@ export default function ManualEntry() {
         carbs: String((Number(carbs) || 0) / factor),
         fat: String((Number(fat) || 0) / factor),
         servingG: String(grams),
-        servingLabel: '1 porsi',
+        servingLabel: t.servingDefault,
       },
     });
   };
@@ -43,36 +45,36 @@ export default function ManualEntry() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <ScrollView contentContainerStyle={{ padding: spacing.lg }} showsVerticalScrollIndicator={false}>
-        <SheetHeader title="Tambah Manual" />
+        <SheetHeader title={t.addManual} />
         <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.lg, marginTop: -spacing.sm }]}>
-          Masukkan nilai gizi per porsi yang kamu makan.
+          {t.manualHint}
         </Text>
 
-        <Field label="Nama makanan" value={name} onChangeText={setName} colors={colors} autoFocus />
+        <Field label={t.foodNameLabel} value={name} onChangeText={setName} colors={colors} autoFocus />
         <View style={{ height: spacing.md }} />
         <View style={{ flexDirection: 'row', gap: spacing.md }}>
           <View style={{ flex: 1 }}>
-            <Field label="Kalori" value={cal} onChangeText={setCal} colors={colors} numeric />
+            <Field label={t.caloriesLabel} value={cal} onChangeText={setCal} colors={colors} numeric />
           </View>
           <View style={{ flex: 1 }}>
-            <Field label="Porsi (gram)" value={servingG} onChangeText={setServingG} colors={colors} numeric />
+            <Field label={t.servingGramsLabel} value={servingG} onChangeText={setServingG} colors={colors} numeric />
           </View>
         </View>
         <View style={{ height: spacing.md }} />
         <View style={{ flexDirection: 'row', gap: spacing.md }}>
           <View style={{ flex: 1 }}>
-            <Field label="Protein (g)" value={protein} onChangeText={setProtein} colors={colors} numeric />
+            <Field label={t.labelProteinG} value={protein} onChangeText={setProtein} colors={colors} numeric />
           </View>
           <View style={{ flex: 1 }}>
-            <Field label="Karbo (g)" value={carbs} onChangeText={setCarbs} colors={colors} numeric />
+            <Field label={t.labelCarbsG} value={carbs} onChangeText={setCarbs} colors={colors} numeric />
           </View>
           <View style={{ flex: 1 }}>
-            <Field label="Lemak (g)" value={fat} onChangeText={setFat} colors={colors} numeric />
+            <Field label={t.labelFatG} value={fat} onChangeText={setFat} colors={colors} numeric />
           </View>
         </View>
 
         <View style={{ height: spacing.xl }} />
-        <Button title="Lanjut" onPress={save} disabled={!canSave} />
+        <Button title={t.next} onPress={save} disabled={!canSave} />
       </ScrollView>
     </View>
   );

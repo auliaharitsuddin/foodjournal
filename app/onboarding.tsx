@@ -10,29 +10,31 @@ import { Button } from '@/components/Button';
 import { PressableScale } from '@/components/PressableScale';
 import { useStore } from '@/lib/store';
 import { UserProfile } from '@/lib/types';
+import { useLanguage } from '@/lib/i18n';
 
 const { width } = Dimensions.get('window');
 
 type GoalType = UserProfile['goalType'];
 type Activity = UserProfile['activityLevel'];
 
-const ACTIVITY_OPTIONS: { key: Activity; label: string; desc: string; factor: number }[] = [
-  { key: 'sedentary', label: 'Santai', desc: 'Jarang olahraga', factor: 1.2 },
-  { key: 'light', label: 'Ringan', desc: 'Olahraga 1-3x/minggu', factor: 1.375 },
-  { key: 'moderate', label: 'Sedang', desc: 'Olahraga 3-5x/minggu', factor: 1.55 },
-  { key: 'active', label: 'Aktif', desc: 'Olahraga tiap hari', factor: 1.725 },
-];
-
-const GOAL_OPTIONS: { key: GoalType; label: string; emoji: string }[] = [
-  { key: 'lose', label: 'Turun Berat Badan', emoji: '📉' },
-  { key: 'maintain', label: 'Jaga Berat Badan', emoji: '⚖️' },
-  { key: 'gain', label: 'Naik Berat Badan', emoji: '📈' },
-];
-
 export default function Onboarding() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const { completeOnboarding } = useStore();
   const [step, setStep] = useState(0);
+
+  const ACTIVITY_OPTIONS: { key: Activity; label: string; desc: string; factor: number }[] = [
+    { key: 'sedentary', label: t.activitySedentary, desc: t.activityDescSedentary, factor: 1.2 },
+    { key: 'light', label: t.activityLight, desc: t.activityDescLight, factor: 1.375 },
+    { key: 'moderate', label: t.activityModerate, desc: t.activityDescModerate, factor: 1.55 },
+    { key: 'active', label: t.activityActive, desc: t.activityDescActive, factor: 1.725 },
+  ];
+
+  const GOAL_OPTIONS: { key: GoalType; label: string; emoji: string }[] = [
+    { key: 'lose', label: t.goalLoseFull, emoji: '📉' },
+    { key: 'maintain', label: t.goalMaintainFull, emoji: '⚖️' },
+    { key: 'gain', label: t.goalGainFull, emoji: '📈' },
+  ];
 
   const [name, setName] = useState('');
   const [goalType, setGoalType] = useState<GoalType>('maintain');
@@ -74,7 +76,7 @@ export default function Onboarding() {
     const goalCarbsG = Math.round((goalCalories - goalProteinG * 4 - goalFatG * 9) / 4);
 
     completeOnboarding({
-      name: name.trim() || 'Kamu',
+      name: name.trim() || t.youDefault,
       heightCm: h,
       startWeightKg: w,
       goalWeightKg: gw,
@@ -127,15 +129,15 @@ export default function Onboarding() {
                 <View>
                   <Text style={{ fontSize: 44, marginBottom: spacing.md }}>🍎</Text>
                   <Text style={[type.largeTitle, { color: colors.label, marginBottom: spacing.sm }]}>
-                    Selamat Datang
+                    {t.welcomeTitle}
                   </Text>
                   <Text style={[type.body, { color: colors.labelSecondary, marginBottom: spacing.xxl }]}>
-                    Yuk mulai catat perjalanan makan sehatmu. Siapa nama kamu?
+                    {t.welcomeDesc}
                   </Text>
                   <TextInput
                     value={name}
                     onChangeText={setName}
-                    placeholder="Nama kamu"
+                    placeholder={t.namePlaceholder}
                     placeholderTextColor={colors.labelTertiary}
                     style={[
                       type.title3,
@@ -155,10 +157,10 @@ export default function Onboarding() {
               {step === 1 && (
                 <View>
                   <Text style={[type.largeTitle, { color: colors.label, marginBottom: spacing.sm }]}>
-                    Apa tujuanmu?
+                    {t.goalStepTitle}
                   </Text>
                   <Text style={[type.body, { color: colors.labelSecondary, marginBottom: spacing.xxl }]}>
-                    Kami akan sesuaikan target kalori harianmu.
+                    {t.goalStepDesc}
                   </Text>
                   {GOAL_OPTIONS.map((g) => (
                     <PressableScale
@@ -186,18 +188,18 @@ export default function Onboarding() {
               {step === 2 && (
                 <View>
                   <Text style={[type.largeTitle, { color: colors.label, marginBottom: spacing.sm }]}>
-                    Tinggi & Berat
+                    {t.heightWeightTitle}
                   </Text>
                   <Text style={[type.body, { color: colors.labelSecondary, marginBottom: spacing.xxl }]}>
-                    Dipakai untuk menghitung kebutuhan kalori harianmu.
+                    {t.heightWeightDesc}
                   </Text>
-                  <Field label="Tinggi badan (cm)" value={heightCm} onChangeText={setHeightCm} colors={colors} />
+                  <Field label={t.heightLabel} value={heightCm} onChangeText={setHeightCm} colors={colors} />
                   <View style={{ height: spacing.md }} />
-                  <Field label="Berat badan saat ini (kg)" value={weightKg} onChangeText={setWeightKg} colors={colors} />
+                  <Field label={t.currentWeightLabel} value={weightKg} onChangeText={setWeightKg} colors={colors} />
                   {goalType !== 'maintain' && (
                     <>
                       <View style={{ height: spacing.md }} />
-                      <Field label="Berat badan target (kg)" value={goalWeightKg} onChangeText={setGoalWeightKg} colors={colors} />
+                      <Field label={t.goalWeightLabel} value={goalWeightKg} onChangeText={setGoalWeightKg} colors={colors} />
                     </>
                   )}
                 </View>
@@ -206,10 +208,10 @@ export default function Onboarding() {
               {step === 3 && (
                 <View>
                   <Text style={[type.largeTitle, { color: colors.label, marginBottom: spacing.sm }]}>
-                    Seberapa aktif kamu?
+                    {t.activityStepTitle}
                   </Text>
                   <Text style={[type.body, { color: colors.labelSecondary, marginBottom: spacing.xxl }]}>
-                    Semakin aktif, semakin besar kebutuhan kalorimu.
+                    {t.activityStepDesc}
                   </Text>
                   {ACTIVITY_OPTIONS.map((a) => (
                     <PressableScale
@@ -237,11 +239,10 @@ export default function Onboarding() {
                 <View>
                   <Text style={{ fontSize: 44, marginBottom: spacing.md }}>🎉</Text>
                   <Text style={[type.largeTitle, { color: colors.label, marginBottom: spacing.sm }]}>
-                    Semua siap, {name || 'kamu'}!
+                    {t.allSetTitle(name || t.you)}
                   </Text>
                   <Text style={[type.body, { color: colors.labelSecondary }]}>
-                    Kami sudah menyiapkan target kalori & nutrisi harian yang disesuaikan untukmu. Kamu bisa
-                    mengubahnya kapan saja di halaman Profil.
+                    {t.allSetDesc}
                   </Text>
                 </View>
               )}
@@ -251,10 +252,10 @@ export default function Onboarding() {
 
         <View style={{ flexDirection: 'row', gap: spacing.md, padding: spacing.xl }}>
           {step > 0 && (
-            <Button title="Kembali" variant="secondary" onPress={back} style={{ flex: 1 }} />
+            <Button title={t.back} variant="secondary" onPress={back} style={{ flex: 1 }} />
           )}
           <Button
-            title={step === totalSteps - 1 ? 'Mulai Catat' : 'Lanjut'}
+            title={step === totalSteps - 1 ? t.startTracking : t.next}
             onPress={next}
             disabled={!canProceed()}
             style={{ flex: 2 }}

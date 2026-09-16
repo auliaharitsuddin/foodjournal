@@ -10,6 +10,7 @@ import { Card } from '@/components/Card';
 import { LineChart } from '@/components/LineChart';
 import { BarChart } from '@/components/BarChart';
 import { PressableScale } from '@/components/PressableScale';
+import { useLanguage } from '@/lib/i18n';
 
 function last7Days() {
   const days: Date[] = [];
@@ -28,13 +29,14 @@ function isSameDay(a: Date, b: Date) {
 
 export default function Trends() {
   const { colors } = useTheme();
+  const { t, lang } = useLanguage();
   const { state } = useStore();
   const days = useMemo(() => last7Days(), []);
   const [chartWidth, setChartWidth] = useState(0);
   const onChartCardLayout = (e: LayoutChangeEvent) => setChartWidth(e.nativeEvent.layout.width - spacing.lg * 2);
 
   const calorieData = days.map((d) => ({
-    label: d.toLocaleDateString('id-ID', { weekday: 'short' }).slice(0, 2),
+    label: d.toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { weekday: 'short' }).slice(0, 2),
     value: state.meals.filter((m) => isSameDay(new Date(m.loggedAt), d)).reduce((a, m) => a + m.calories, 0),
   }));
 
@@ -49,7 +51,7 @@ export default function Trends() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: 140 }} showsVerticalScrollIndicator={false}>
-        <Text style={[type.title1, { color: colors.label, marginBottom: spacing.lg }]}>Progres</Text>
+        <Text style={[type.title1, { color: colors.label, marginBottom: spacing.lg }]}>{t.tabTrends}</Text>
 
         <PressableScale onPress={() => router.push('/insights')} style={{ marginBottom: spacing.lg }}>
           <Card style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
@@ -57,8 +59,8 @@ export default function Trends() {
               <Ionicons name="sparkles" size={22} color={colors.indigo} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={[type.bodyMedium, { color: colors.label }]}>Insight & Rekomendasi AI</Text>
-              <Text style={[type.footnote, { color: colors.labelSecondary }]}>Pola makan & saran kesehatan dari datamu</Text>
+              <Text style={[type.bodyMedium, { color: colors.label }]}>{t.insightsCardTitle}</Text>
+              <Text style={[type.footnote, { color: colors.labelSecondary }]}>{t.insightsCardDesc}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.labelTertiary} />
           </Card>
@@ -67,7 +69,7 @@ export default function Trends() {
         <Card style={{ marginBottom: spacing.lg }} onLayout={onChartCardLayout}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md }}>
             <View>
-              <Text style={[type.footnote, { color: colors.labelSecondary }]}>Berat Badan</Text>
+              <Text style={[type.footnote, { color: colors.labelSecondary }]}>{t.weightLabel}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
                 <Text style={[type.title1, { color: colors.label }]}>{currentWeight}</Text>
                 <Text style={[type.subhead, { color: colors.labelSecondary }]}>kg</Text>
@@ -84,7 +86,7 @@ export default function Trends() {
               style={{ backgroundColor: colors.blue, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, flexDirection: 'row', alignItems: 'center', gap: 4 }}
             >
               <Ionicons name="add" size={16} color="#fff" />
-              <Text style={[type.caption1, { color: '#fff' }]}>Catat</Text>
+              <Text style={[type.caption1, { color: '#fff' }]}>{t.log}</Text>
             </PressableScale>
           </View>
           {weightSeries.length > 1 && chartWidth > 0 ? (
@@ -97,13 +99,13 @@ export default function Trends() {
             />
           ) : (
             <View style={{ height: 120, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={[type.footnote, { color: colors.labelTertiary }]}>Catat berat badan minimal 2x untuk melihat grafik</Text>
+              <Text style={[type.footnote, { color: colors.labelTertiary }]}>{t.weightChartHint}</Text>
             </View>
           )}
         </Card>
 
         <Card style={{ marginBottom: spacing.lg }}>
-          <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.md }]}>Kalori 7 Hari Terakhir</Text>
+          <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.md }]}>{t.calories7Days}</Text>
           <BarChart
             data={calorieData}
             goal={state.profile.goalCalories}
@@ -112,20 +114,20 @@ export default function Trends() {
           />
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: spacing.md }}>
             <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.orange }} />
-            <Text style={[type.caption1, { color: colors.labelSecondary }]}>Target: {state.profile.goalCalories} kal/hari</Text>
+            <Text style={[type.caption1, { color: colors.labelSecondary }]}>{t.targetPerDay(state.profile.goalCalories)}</Text>
           </View>
         </Card>
 
         <Card>
-          <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.md }]}>Rata-rata 7 Hari</Text>
+          <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.md }]}>{t.avg7Days}</Text>
           <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
             <AvgStat
-              label="Kalori"
+              label={t.caloriesLabel}
               value={Math.round(calorieData.reduce((a, d) => a + d.value, 0) / 7)}
               color={colors.orange}
             />
             <AvgStat
-              label="Hari Tercapai"
+              label={t.daysAchieved}
               value={calorieData.filter((d) => d.value > 0 && d.value <= state.profile.goalCalories).length}
               color={colors.green}
               suffix="/7"

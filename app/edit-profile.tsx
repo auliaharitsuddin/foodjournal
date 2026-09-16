@@ -9,26 +9,28 @@ import { Segmented } from '@/components/Segmented';
 import { SheetHeader } from '@/components/SheetHeader';
 import { UserProfile } from '@/lib/types';
 import { safeBack } from '@/lib/nav';
+import { useLanguage } from '@/lib/i18n';
 
 type Activity = UserProfile['activityLevel'];
 type GoalType = UserProfile['goalType'];
 
-const ACTIVITY_OPTIONS: { key: Activity; label: string; factor: number }[] = [
-  { key: 'sedentary', label: 'Santai', factor: 1.2 },
-  { key: 'light', label: 'Ringan', factor: 1.375 },
-  { key: 'moderate', label: 'Sedang', factor: 1.55 },
-  { key: 'active', label: 'Aktif', factor: 1.725 },
-];
-
-const GOAL_OPTIONS: { key: GoalType; label: string }[] = [
-  { key: 'lose', label: 'Turun BB' },
-  { key: 'maintain', label: 'Jaga BB' },
-  { key: 'gain', label: 'Naik BB' },
-];
-
 export default function EditProfile() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const { state, updateProfile } = useStore();
+
+  const ACTIVITY_OPTIONS: { key: Activity; label: string; factor: number }[] = [
+    { key: 'sedentary', label: t.activitySedentary, factor: 1.2 },
+    { key: 'light', label: t.activityLight, factor: 1.375 },
+    { key: 'moderate', label: t.activityModerate, factor: 1.55 },
+    { key: 'active', label: t.activityActive, factor: 1.725 },
+  ];
+
+  const GOAL_OPTIONS: { key: GoalType; label: string }[] = [
+    { key: 'lose', label: t.goalLose },
+    { key: 'maintain', label: t.goalMaintain },
+    { key: 'gain', label: t.goalGain },
+  ];
   const p = state.profile;
   const currentWeightKg = state.weights[0]?.kg ?? p.startWeightKg;
 
@@ -85,51 +87,51 @@ export default function EditProfile() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <ScrollView contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }} showsVerticalScrollIndicator={false}>
-        <SheetHeader title="Ubah Profil & Target" />
+        <SheetHeader title={t.editProfileTitle} />
 
-        <Field label="Nama" value={name} onChangeText={setName} colors={colors} />
+        <Field label={t.nameLabel} value={name} onChangeText={setName} colors={colors} />
         <View style={{ height: spacing.md }} />
-        <Field label="Tinggi badan (cm)" value={heightCm} onChangeText={setHeightCm} colors={colors} numeric />
+        <Field label={t.heightLabel} value={heightCm} onChangeText={setHeightCm} colors={colors} numeric />
         <View style={{ height: spacing.md }} />
-        <Field label="Berat badan target (kg)" value={goalWeightKg} onChangeText={setGoalWeightKg} colors={colors} numeric />
+        <Field label={t.goalWeightLabel} value={goalWeightKg} onChangeText={setGoalWeightKg} colors={colors} numeric />
 
         <View style={{ height: spacing.lg }} />
-        <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.xs }]}>Level Aktivitas</Text>
+        <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.xs }]}>{t.activityLevelLabel}</Text>
         <Segmented options={ACTIVITY_OPTIONS.map((a) => a.label)} value={activityIndex} onChange={(i) => setActivity(ACTIVITY_OPTIONS[i].key)} />
 
         <View style={{ height: spacing.lg }} />
-        <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.xs }]}>Tujuan</Text>
+        <Text style={[type.footnote, { color: colors.labelSecondary, marginBottom: spacing.xs }]}>{t.goalTypeLabel}</Text>
         <Segmented options={GOAL_OPTIONS.map((g) => g.label)} value={goalTypeIndex} onChange={(i) => setGoalType(GOAL_OPTIONS[i].key)} />
 
         <View style={{ height: spacing.xl }} />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md }}>
-          <Text style={[type.headline, { color: colors.label }]}>Target Harian</Text>
-          <Button title="Hitung Otomatis" variant="secondary" onPress={recalculate} style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.sm }} />
+          <Text style={[type.headline, { color: colors.label }]}>{t.dailyGoals}</Text>
+          <Button title={t.autoCalculate} variant="secondary" onPress={recalculate} style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.sm }} />
         </View>
 
         <View style={{ flexDirection: 'row', gap: spacing.md }}>
           <View style={{ flex: 1 }}>
-            <Field label="Kalori" value={goalCalories} onChangeText={setGoalCalories} colors={colors} numeric />
+            <Field label={t.caloriesLabel} value={goalCalories} onChangeText={setGoalCalories} colors={colors} numeric />
           </View>
           <View style={{ flex: 1 }}>
-            <Field label="Air (ml)" value={goalWaterMl} onChangeText={setGoalWaterMl} colors={colors} numeric />
+            <Field label={t.waterMlLabel} value={goalWaterMl} onChangeText={setGoalWaterMl} colors={colors} numeric />
           </View>
         </View>
         <View style={{ height: spacing.md }} />
         <View style={{ flexDirection: 'row', gap: spacing.md }}>
           <View style={{ flex: 1 }}>
-            <Field label="Protein (g)" value={goalProteinG} onChangeText={setGoalProteinG} colors={colors} numeric />
+            <Field label={t.labelProteinG} value={goalProteinG} onChangeText={setGoalProteinG} colors={colors} numeric />
           </View>
           <View style={{ flex: 1 }}>
-            <Field label="Karbo (g)" value={goalCarbsG} onChangeText={setGoalCarbsG} colors={colors} numeric />
+            <Field label={t.labelCarbsG} value={goalCarbsG} onChangeText={setGoalCarbsG} colors={colors} numeric />
           </View>
           <View style={{ flex: 1 }}>
-            <Field label="Lemak (g)" value={goalFatG} onChangeText={setGoalFatG} colors={colors} numeric />
+            <Field label={t.labelFatG} value={goalFatG} onChangeText={setGoalFatG} colors={colors} numeric />
           </View>
         </View>
 
         <View style={{ height: spacing.xl }} />
-        <Button title="Simpan" onPress={save} />
+        <Button title={t.save} onPress={save} />
       </ScrollView>
     </View>
   );

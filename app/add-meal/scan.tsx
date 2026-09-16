@@ -11,9 +11,11 @@ import { Button } from '@/components/Button';
 import { PressableScale } from '@/components/PressableScale';
 import { lookupBarcode } from '@/lib/openFoodFacts';
 import { safeBack } from '@/lib/nav';
+import { useLanguage } from '@/lib/i18n';
 
 export default function ScanBarcode() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
   const params = useLocalSearchParams<{ mealType?: string }>();
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState(false);
@@ -57,12 +59,12 @@ export default function ScanBarcode() {
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.xl, justifyContent: 'center' }}>
         <Text style={{ fontSize: 44, textAlign: 'center', marginBottom: spacing.md }}>📱</Text>
         <Text style={[type.title2, { color: colors.label, textAlign: 'center', marginBottom: spacing.sm }]}>
-          Pindai Barcode Butuh Aplikasi Mobile
+          {t.scanWebTitle}
         </Text>
         <Text style={[type.body, { color: colors.labelSecondary, textAlign: 'center', marginBottom: spacing.xl }]}>
-          Fitur pindai barcode belum tersedia di versi web. Buka FoodJournal di aplikasi iOS/Android untuk memindai kemasan makanan.
+          {t.scanWebDesc}
         </Text>
-        <Button title="Kembali" variant="secondary" onPress={safeBack} />
+        <Button title={t.back} variant="secondary" onPress={safeBack} />
       </SafeAreaView>
     );
   }
@@ -74,14 +76,14 @@ export default function ScanBarcode() {
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, padding: spacing.xl, justifyContent: 'center' }}>
         <Text style={{ fontSize: 44, textAlign: 'center', marginBottom: spacing.md }}>📷</Text>
         <Text style={[type.title2, { color: colors.label, textAlign: 'center', marginBottom: spacing.sm }]}>
-          Izin Kamera Diperlukan
+          {t.cameraPermTitle}
         </Text>
         <Text style={[type.body, { color: colors.labelSecondary, textAlign: 'center', marginBottom: spacing.xl }]}>
-          Untuk memindai barcode kemasan makanan, aplikasi butuh akses kamera.
+          {t.cameraPermDesc}
         </Text>
-        <Button title="Izinkan Kamera" onPress={requestPermission} />
+        <Button title={t.allowCamera} onPress={requestPermission} />
         <View style={{ height: spacing.md }} />
-        <Button title="Batal" variant="secondary" onPress={safeBack} />
+        <Button title={t.cancel} variant="secondary" onPress={safeBack} />
       </SafeAreaView>
     );
   }
@@ -102,7 +104,7 @@ export default function ScanBarcode() {
           >
             <Ionicons name="close" size={22} color="#fff" />
           </PressableScale>
-          <Text style={[type.headline, { color: '#fff' }]}>Scan Barcode</Text>
+          <Text style={[type.headline, { color: '#fff' }]}>{t.scanBarcode}</Text>
           <View style={{ width: 40 }} />
         </View>
       </SafeAreaView>
@@ -113,16 +115,16 @@ export default function ScanBarcode() {
         {loading && (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: 'rgba(0,0,0,0.6)', padding: spacing.md, borderRadius: radius.md }}>
             <ActivityIndicator color="#fff" />
-            <Text style={{ color: '#fff' }}>Mencari produk...</Text>
+            <Text style={{ color: '#fff' }}>{t.searchingProduct}</Text>
           </View>
         )}
         {notFound && !loading && (
           <View style={{ backgroundColor: 'rgba(255,59,48,0.9)', padding: spacing.md, borderRadius: radius.md, marginHorizontal: spacing.xl }}>
-            <Text style={{ color: '#fff', textAlign: 'center' }}>Produk tidak ditemukan. Coba barcode lain atau cari manual.</Text>
+            <Text style={{ color: '#fff', textAlign: 'center' }}>{t.productNotFound}</Text>
           </View>
         )}
         {!loading && !notFound && (
-          <Text style={{ color: 'rgba(255,255,255,0.8)' }}>Arahkan kamera ke barcode produk</Text>
+          <Text style={{ color: 'rgba(255,255,255,0.8)' }}>{t.aimCamera}</Text>
         )}
       </View>
     </View>
